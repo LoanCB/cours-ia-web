@@ -21,7 +21,7 @@ app.post("/suites/all", async (req, res) => {
   const writer = csvWriter({
     path: csvFilePath,
     header: [
-      { id: "id", title: "ID" },
+      { id: "id", title: "id" },
       { id: "nbRooms", title: "nbRooms" },
       { id: "surface", title: "surface" },
       { id: "nbWindows", title: "nbWindows" },
@@ -58,19 +58,19 @@ app.post("/suites", async (req, res) => {
       // Trouver le dernier ID existant
       let lastId = 0;
       existingSuites.forEach((suite) => {
-        const suiteId = parseInt(suite.ID);
+        const suiteId = parseInt(suite.id);
         if (suiteId > lastId) {
           lastId = suiteId;
         }
       });
 
       // Générer un nouvel ID si l'ID n'est pas spécifié dans le body
-      if (!newSuite.ID) {
-        newSuite.ID = (lastId + 1).toString();
+      if (!newSuite.id) {
+        newSuite.id = (lastId + 1).toString();
       }
 
       // Vérifier si l'ID existe déjà dans les données existantes
-      const existingIds = existingSuites.map((suite) => suite.ID);
+      const existingIds = existingSuites.map((suite) => suite.id);
       if (existingIds.includes(newSuite.ID)) {
         res.status(400).json({ error: "ID already exists" });
         return;
@@ -82,7 +82,7 @@ app.post("/suites", async (req, res) => {
       const writer = csvWriter({
         path: csvFilePath,
         header: [
-          { id: "ID", title: "ID" },
+          { id: "id", title: "id" },
           { id: "nbRooms", title: "nbRooms" },
           { id: "surface", title: "surface" },
           { id: "nbWindows", title: "nbWindows" },
@@ -128,7 +128,7 @@ app.get("/suites/:id", (req, res) => {
   fs.createReadStream(csvFilePath)
     .pipe(csvParser({ separator: ";" }))
     .on("data", (row) => {
-      if (row.ID === id) {
+      if (row.id === id) {
         suite = row;
       }
     })

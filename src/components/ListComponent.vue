@@ -16,15 +16,49 @@ interface Suite {
   price: number;
 }
 
-onMounted(async () => {
+const getSuitesList = async () => {
   try {
     const response = await fetch("http://127.0.0.1:3002/suites");
     suites.value = await response.json();
-    console.log(suites.value);
   } catch (e) {
     console.error(e);
   }
+};
+
+const resetForm = () => {
+  nbRooms.value = null;
+  surface.value = null;
+  nbWindows.value = null;
+  price.value = null;
+};
+
+onMounted(async () => {
+  await getSuitesList();
 });
+
+const handleCreateSuite = async () => {
+  const newSuite = {
+    nbRooms: nbRooms.value,
+    surface: surface.value,
+    nbWindows: nbWindows.value,
+    price: price.value,
+  };
+
+  try {
+    await fetch("http://127.0.0.1:3002/suites", {
+      method: "POST",
+      body: JSON.stringify(newSuite),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    resetForm();
+    await getSuitesList();
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const handleDeleteSuite = (suite: Suite) => {
   console.log(`TODO : delete suite ${suite.id}`);
@@ -53,7 +87,13 @@ const handleEditSuite = (suite: Suite) => {
 
       <v-number-input v-model="price" label="Prix"></v-number-input>
 
-      <v-btn class="mt-2" type="submit" block variant="tonal" color="green"
+      <v-btn
+        class="mt-2"
+        type="submit"
+        block
+        variant="tonal"
+        color="green"
+        @click="handleCreateSuite()"
         >Ajouter</v-btn
       >
     </v-form>
